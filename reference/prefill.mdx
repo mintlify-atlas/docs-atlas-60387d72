@@ -1,7 +1,7 @@
 ---
-title: "Prefill: Pre-populate Calendly Scheduling Forms"
+title: "Prefill: Pre-populate Calendly Scheduling Form Fields"
 sidebarTitle: "Prefill"
-description: "Document all Prefill fields for pre-populating name, email, guests, and custom question answers in embedded Calendly scheduling forms."
+description: "Reference for all Prefill fields for pre-populating name, email, phone, guests, and custom answers in embedded Calendly scheduling forms."
 ---
 
 The `prefill` prop lets you pre-populate fields in Calendly's scheduling form before the user sees it. This is especially useful when the viewer is already authenticated — you can forward their profile data so they don't have to type it again. All fields are optional.
@@ -56,7 +56,7 @@ All fields are optional. Only the fields you provide are forwarded to Calendly a
 </ParamField>
 
 <ParamField body="smsReminderNumber" type="string">
-  Pre-fills the phone number used for SMS reminders. Include the country code in E.164 format (e.g. `"+15551234567"`).
+  Pre-fills the phone number used for SMS reminders. Include the country code in E.164 format (e.g. `"+15551234567"`). This value is appended to the Calendly URL as the `phone_number` query parameter.
 </ParamField>
 
 <ParamField body="location" type="string">
@@ -89,7 +89,7 @@ All fields are optional. Only the fields you provide are forwarded to Calendly a
 </ParamField>
 
 <ParamField body="date" type="Date">
-  Pre-selects a specific date on the calendar. Pass a JavaScript `Date` object. The module formats it as `YYYY-MM-DD` before appending it to the Calendly URL.
+  Pre-selects a specific date on the calendar. Pass a JavaScript `Date` object. The module formats it as `YYYY-MM-DD` before appending it to the Calendly URL (e.g. `new Date('2024-06-15')` becomes `date=2024-06-15`).
 </ParamField>
 
 ---
@@ -103,6 +103,7 @@ All fields are optional. Only the fields you provide are forwarded to Calendly a
     :prefill="{
       name: 'Jane Doe',
       email: 'jane@example.com',
+      smsReminderNumber: '+15551234567',
       customAnswers: {
         a1: 'How did you hear about us?',
         a2: 'Via Twitter',

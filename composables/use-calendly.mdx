@@ -1,10 +1,10 @@
 ---
-title: "useCalendly(): Programmatic Calendly Widget Control"
+title: "useCalendly(): Control Calendly Widgets Programmatically"
 sidebarTitle: "useCalendly"
-description: "Wraps Calendly's widget.js, lazy-loads the script on first call, and exposes 6 async methods for controlling inline, popup, and badge widgets."
+description: "Lazy-loads Calendly's widget.js on first call and returns 6 async methods for controlling inline, popup, and badge widgets in Nuxt 3."
 ---
 
-`useCalendly()` is the primary composable for programmatically controlling Calendly widgets. It lazy-loads the Calendly `widget.js` script from `assets.calendly.com` on first invocation — subsequent calls reuse the already-loaded script — and returns an object containing 6 async methods. All methods are client-side only: they are safe to call during SSR but become no-ops until the code runs in the browser.
+`useCalendly()` is the primary composable for programmatically controlling Calendly widgets. It lazy-loads the Calendly `widget.js` script from `https://assets.calendly.com/assets/external/widget.js` on first invocation — subsequent calls reuse the already-loaded script — and returns an object containing 6 async methods. All methods are client-side only: they are safe to call during SSR but become no-ops until the code runs in the browser.
 
 ## Usage
 
@@ -22,7 +22,7 @@ const calendly = useCalendly()
 
 ### initInlineWidget(options)
 
-Initializes an inline Calendly widget inside a container element you provide. The widget is rendered as an `<iframe>` inside that element. Call this after the container element is mounted (e.g. inside `onMounted`).
+Initializes an inline Calendly widget. The widget is rendered as an `<iframe>` inside the container element managed by the `<CalendlyInlineWidget>` component, or you can trigger it manually after the component is mounted (e.g. inside `onMounted`).
 
 <ParamField path="options" type="CalendlyInlineWidgetOptions">
   Configuration object for the inline widget. See [Types reference](/reference/types) for all available fields.
@@ -47,8 +47,8 @@ Initializes an inline Calendly widget inside a container element you provide. Th
 const calendly = useCalendly()
 
 await calendly.initInlineWidget({
-  url: 'https://calendly.com/your-link/30min',
-  parentElement: document.getElementById('calendly-container')!,
+  prefill: { name: 'Jane Doe', email: 'jane@example.com' },
+  pageSettings: { hideEventTypeDetails: true },
 })
 ```
 
@@ -153,6 +153,9 @@ Initializes Calendly's floating badge widget. The badge appears anchored in the 
     <ParamField path="options.pageSettings" type="PageSettings">
       Customize the appearance of the Calendly page inside the badge popup. See [PageSettings reference](/reference/page-settings).
     </ParamField>
+    <ParamField path="options.iframeTitle" type="string">
+      Accessible `title` attribute for the iframe inside the badge popup. Defaults to `"Calendly Scheduling Page"`.
+    </ParamField>
   </Expandable>
 </ParamField>
 
@@ -187,7 +190,7 @@ await calendly.destroyBadgeWidget()
 
 ## Full Example
 
-The example below mirrors the playground page — it renders buttons that each exercise a different `useCalendly()` method when clicked.
+The example below renders buttons that each exercise a different `useCalendly()` method when clicked.
 
 ```vue
 <script setup lang="ts">

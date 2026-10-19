@@ -10,12 +10,23 @@ description: "A floating Calendly badge widget that opens a scheduling popup mod
 
 ```vue
 <template>
-  <CalendlyPopupWidget
-    url="https://calendly.com/your-link/30min"
-    :root-element="$el"
-  />
+  <div ref="rootEl">
+    <CalendlyPopupWidget
+      url="https://calendly.com/your-link/30min"
+      :root-element="rootEl"
+    />
+  </div>
 </template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+const rootEl = ref<HTMLElement>()
+</script>
 ```
+
+<Note>
+  `rootElement` is required and must be a real `HTMLElement`. Use a template ref on a wrapping `<div>` as shown above — do not pass `$el` directly, as it is not reliably accessible in `<script setup>` templates.
+</Note>
 
 ## Props
 
@@ -24,7 +35,7 @@ description: "A floating Calendly badge widget that opens a scheduling popup mod
 </ParamField>
 
 <ParamField path="rootElement" type="HTMLElement" required>
-  The DOM element that will host the popup modal overlay. The modal is teleported into this element using Vue's `<Teleport>`. Pass `$el` or a template ref bound to a dedicated container element.
+  The DOM element that will host the popup modal overlay. The modal is teleported into this element using Vue's `<Teleport>`. Bind a template ref to a wrapping container element and pass it here.
 </ParamField>
 
 <ParamField path="text" type="string">
@@ -79,10 +90,10 @@ description: "A floating Calendly badge widget that opens a scheduling popup mod
 
 ```vue
 <template>
-  <div ref="rootElement">
+  <div ref="rootEl">
     <CalendlyPopupWidget
       url="https://calendly.com/your-link/30min"
-      :root-element="rootElement"
+      :root-element="rootEl"
       text="Schedule time with me"
       color="#09a0c1"
       text-color="#ffffff"
@@ -94,7 +105,7 @@ description: "A floating Calendly badge widget that opens a scheduling popup mod
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const rootElement = ref<HTMLElement>()
+const rootEl = ref<HTMLElement>()
 </script>
 ```
 

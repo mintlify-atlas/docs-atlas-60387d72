@@ -1,7 +1,7 @@
 ---
 title: "PageSettings: Customize Calendly Widget Appearance"
 sidebarTitle: "Page Settings"
-description: "Document all PageSettings fields for controlling Calendly embed colors, GDPR banner visibility, and event detail display options."
+description: "Reference for all PageSettings fields controlling Calendly embed colors, GDPR banner visibility, and event detail display in nuxt-calendly."
 ---
 
 `PageSettings` is an optional object accepted by all three Calendly components (`<CalendlyInlineWidget>`, `<CalendlyPopupButton>`, `<CalendlyPopupWidget>`) as well as all composable option types. It lets you control the visual appearance and information density of the embedded Calendly scheduling page without modifying your Calendly account settings.
@@ -74,7 +74,7 @@ All fields are optional. Omitting a field leaves the corresponding Calendly defa
 </Warning>
 
 <Note>
-  Color strings must **not** include the `#` prefix (e.g. use `"ffffff"`, not `"#ffffff"`). The module automatically strips a leading `#` if you accidentally include one, so both formats are safe — but omitting it is the recommended convention.
+  Color strings must **not** include the `#` prefix (e.g. use `"ffffff"`, not `"#ffffff"`). The module's `sanitizeColorString` utility automatically strips a leading `#` if you accidentally include one, so both formats are safe at runtime — but omitting the `#` is the recommended convention per Calendly's API.
 </Note>
 
 ---

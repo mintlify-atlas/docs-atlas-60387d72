@@ -1,5 +1,5 @@
 ---
-title: "Nuxt Calendly TypeScript Type Reference"
+title: "nuxt-calendly TypeScript Types and Interfaces Reference"
 sidebarTitle: "Types"
 description: "Complete reference for all exported TypeScript types and interfaces in nuxt-calendly, including components, composables, and event handlers."
 ---
@@ -71,7 +71,7 @@ type CalendlyClient = {
   destroyBadgeWidget: () => Promise<void>
   initBadgeWidget: (options: CalendlyPopupWidgetOptions) => Promise<void>
   initPopupWidget: (options: PopupModalContentOptions) => Promise<void>
-  showPopupWidget: (url: string) => Promise<void>
+  showPopupWidget: (url: CalendlyPopupWidgetOptions["url"]) => Promise<void>
   initInlineWidget: (options?: CalendlyInlineWidgetOptions) => Promise<void>
 }
 ```
@@ -92,8 +92,8 @@ type CalendlyClient = {
   Opens a Calendly scheduling page inside a popup modal overlay. Accepts a `PopupModalContentOptions` object containing at minimum a `url`.
 </ResponseField>
 
-<ResponseField name="showPopupWidget" type="(url: string) => Promise<void>">
-  Convenience method — opens a popup modal directly from a Calendly URL string without constructing an options object.
+<ResponseField name="showPopupWidget" type="(url: CalendlyPopupWidgetOptions[&quot;url&quot;]) => Promise<void>">
+  Convenience method — opens a popup modal directly from a Calendly URL string without constructing an options object. The parameter type is `CalendlyPopupWidgetOptions["url"]`, which resolves to `string`.
 </ResponseField>
 
 <ResponseField name="initInlineWidget" type="(options?: CalendlyInlineWidgetOptions) => Promise<void>">
@@ -108,7 +108,7 @@ Each Calendly component accepts a specific options type that defines its accepte
 
 <Expandable title="CalendlyInlineWidgetOptions">
 
-Used by the `<CalendlyInlineWidget>` component and the `initInlineWidget` client method.
+Used by the `<CalendlyInlineWidget>` component and the `initInlineWidget` client method. Note that `url` is a **separate required prop** on the `<CalendlyInlineWidget>` component itself and is not part of this options type.
 
 ```ts
 type CalendlyInlineWidgetOptions = {

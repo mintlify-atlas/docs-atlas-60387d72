@@ -1,7 +1,7 @@
 ---
 title: "useCalendlyEventListener(): React to Scheduling Events"
 sidebarTitle: "Event Listener"
-description: "Listens to postMessage events from the Calendly iframe. Supports 5 handlers: onEventScheduled, onDateAndTimeSelected, onEventTypeViewed, onProfilePageViewed, onPageHeightResize."
+description: "Handles Calendly iframe postMessage events in Nuxt 3. Provides 5 optional callbacks and auto-cleans up listeners via onMounted/onUnmounted."
 ---
 
 `useCalendlyEventListener()` listens to `window` `message` events dispatched by the embedded Calendly iframe. You pass an object of optional handler callbacks — the composable wires each one up to the corresponding `CalendlyEvent` value and calls it whenever the matching message arrives. Listeners are registered inside `onMounted` and automatically removed inside `onUnmounted`, making the composable safe to use inside any Vue component without manual cleanup.
@@ -22,7 +22,7 @@ useCalendlyEventListener({
 
 ## CalendlyEvent Enum
 
-The composable file also exports a `CalendlyEvent` enum that maps each event handler to its underlying postMessage event name. You can import it from `#imports` when you need to compare raw `MessageEvent` data yourself.
+The composable file also exports a `CalendlyEvent` enum that maps each event handler to its underlying postMessage event name. You can import it explicitly from `#imports` when you need to compare raw `MessageEvent` data yourself.
 
 | Enum member | String value |
 |---|---|

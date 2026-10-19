@@ -42,12 +42,12 @@ description: "Renders a Calendly scheduling page as an inline iframe. Supports p
   Emitted once when the embedded iframe finishes loading. Use this to hide external loading indicators or trigger analytics events.
 </ResponseField>
 
-## Exposed State
+## Internal Loading State
 
-The component internally tracks a reactive `isLoading` boolean. While `isLoading` is `true`, a `<LoadingSpinner>` is rendered on top of the iframe placeholder. Once the iframe fires its native `load` event, the spinner is removed and the `load` event is emitted to the parent.
+The component internally tracks a reactive `isLoading` boolean that is not exposed to the parent. While `isLoading` is `true`, a `<LoadingSpinner>` is rendered on top of the iframe placeholder. Once the iframe fires its native `load` event, the spinner is removed and the `load` event is emitted to the parent.
 
 <Note>
-  The widget container has a minimum width of `320px` and a fixed height of `630px` by default, matching Calendly's own embed recommendations. Ensure its parent element provides sufficient space.
+  The widget container has a minimum width of `320px` and a fixed height of `630px`, matching Calendly's own embed recommendations. Ensure the parent element provides sufficient space. These dimensions come from the component's container `<div>` inline style and are not configurable via props.
 </Note>
 
 ## Full Example
