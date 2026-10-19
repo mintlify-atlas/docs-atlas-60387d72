@@ -1,0 +1,191 @@
+---
+title: "Nuxt Calendly TypeScript Type Reference"
+sidebarTitle: "Types"
+description: "Complete reference for all exported TypeScript types and interfaces in nuxt-calendly, including components, composables, and event handlers."
+---
+
+This page documents every TypeScript type and interface exported by `nuxt-calendly`. All types are auto-imported alongside the composable and components — no manual imports are required.
+
+## Type Overview
+
+<CardGroup cols={2}>
+  <Card title="Prefill" icon="pen-to-square" href="/reference/prefill">
+    Pre-populate scheduling form fields such as name, email, guests, and custom question answers.
+  </Card>
+  <Card title="Utm" icon="chart-bar" href="/reference/utm">
+    Pass UTM tracking parameters to the embedded Calendly page for campaign attribution.
+  </Card>
+  <Card title="PageSettings" icon="palette" href="/reference/page-settings">
+    Control the visual appearance of the embedded scheduling page — colors, banners, and detail visibility.
+  </Card>
+  <Card title="CalendlyEvent" icon="bolt" href="/composables/use-calendly-event-listener">
+    Enum of all Calendly postMessage event names used with `useCalendlyEventListener`.
+  </Card>
+</CardGroup>
+
+---
+
+## CalendlyEventHandlers
+
+`CalendlyEventHandlers` is an object type whose properties are optional callback functions. Pass it to any component or composable to react to events emitted by the embedded Calendly widget.
+
+```ts
+type CalendlyEventHandlers = {
+  onDateAndTimeSelected?: (e: DateAndTimeSelectedEvent) => any
+  onEventScheduled?: (e: EventScheduledEvent) => any
+  onEventTypeViewed?: (e: EventTypeViewedEvent) => any
+  onProfilePageViewed?: (e: ProfilePageViewedEvent) => any
+  onPageHeightResize?: (e: PageHeightResizeEvent) => any
+}
+```
+
+<ResponseField name="onDateAndTimeSelected" type="(e: DateAndTimeSelectedEvent) => any">
+  Fired when the user selects a date and time slot on the scheduling page but has not yet confirmed the booking.
+</ResponseField>
+
+<ResponseField name="onEventScheduled" type="(e: EventScheduledEvent) => any">
+  Fired when the user successfully books an event. The event payload contains `event.uri` and `invitee.uri` — canonical Calendly API v2 references you can use to retrieve full booking details.
+</ResponseField>
+
+<ResponseField name="onEventTypeViewed" type="(e: EventTypeViewedEvent) => any">
+  Fired when an event type page is viewed inside the embed.
+</ResponseField>
+
+<ResponseField name="onProfilePageViewed" type="(e: ProfilePageViewedEvent) => any">
+  Fired when a Calendly profile page (showing multiple event types) is viewed inside the embed.
+</ResponseField>
+
+<ResponseField name="onPageHeightResize" type="(e: PageHeightResizeEvent) => any">
+  Fired whenever the Calendly iframe resizes. The payload includes a `height` string (e.g. `"1200px"`) which you can use to keep a wrapper element in sync with the iframe height.
+</ResponseField>
+
+---
+
+## CalendlyClient
+
+`CalendlyClient` is the type returned by the `useCalendly()` composable. All methods are async and resolve only after the Calendly script has fully loaded.
+
+```ts
+type CalendlyClient = {
+  closePopupWidget: () => Promise<void>
+  destroyBadgeWidget: () => Promise<void>
+  initBadgeWidget: (options: CalendlyPopupWidgetOptions) => Promise<void>
+  initPopupWidget: (options: PopupModalContentOptions) => Promise<void>
+  showPopupWidget: (url: string) => Promise<void>
+  initInlineWidget: (options?: CalendlyInlineWidgetOptions) => Promise<void>
+}
+```
+
+<ResponseField name="closePopupWidget" type="() => Promise<void>">
+  Programmatically closes any currently open Calendly popup modal.
+</ResponseField>
+
+<ResponseField name="destroyBadgeWidget" type="() => Promise<void>">
+  Removes a badge (floating button) widget that was previously initialized with `initBadgeWidget`.
+</ResponseField>
+
+<ResponseField name="initBadgeWidget" type="(options: CalendlyPopupWidgetOptions) => Promise<void>">
+  Initializes a floating badge widget anchored to the corner of the page. Accepts a `CalendlyPopupWidgetOptions` object — see below.
+</ResponseField>
+
+<ResponseField name="initPopupWidget" type="(options: PopupModalContentOptions) => Promise<void>">
+  Opens a Calendly scheduling page inside a popup modal overlay. Accepts a `PopupModalContentOptions` object containing at minimum a `url`.
+</ResponseField>
+
+<ResponseField name="showPopupWidget" type="(url: string) => Promise<void>">
+  Convenience method — opens a popup modal directly from a Calendly URL string without constructing an options object.
+</ResponseField>
+
+<ResponseField name="initInlineWidget" type="(options?: CalendlyInlineWidgetOptions) => Promise<void>">
+  Programmatically initializes an inline embed. Accepts an optional `CalendlyInlineWidgetOptions` object.
+</ResponseField>
+
+---
+
+## Component Option Types
+
+Each Calendly component accepts a specific options type that defines its accepted props.
+
+<Expandable title="CalendlyInlineWidgetOptions">
+
+Used by the `<CalendlyInlineWidget>` component and the `initInlineWidget` client method.
+
+```ts
+type CalendlyInlineWidgetOptions = {
+  prefill?: Prefill
+  utm?: Utm
+  pageSettings?: PageSettings
+  iframeTitle?: IframeTitle
+}
+```
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `prefill` | `Prefill` | Pre-populate scheduling form fields. See [Prefill](/reference/prefill). |
+| `utm` | `Utm` | UTM tracking parameters. See [UTM](/reference/utm). |
+| `pageSettings` | `PageSettings` | Visual appearance overrides. See [PageSettings](/reference/page-settings). |
+| `iframeTitle` | `string` | Accessible title for the iframe element (defaults to `"Calendly Scheduling Page"`). |
+
+</Expandable>
+
+<Expandable title="CalendlyPopupButtonOptions">
+
+Used by the `<CalendlyPopupButton>` component to render an inline button that opens a Calendly modal.
+
+```ts
+type CalendlyPopupButtonOptions = {
+  url: string
+  rootElement: HTMLElement
+  text?: string
+  prefill?: Prefill
+  utm?: Utm
+  pageSettings?: PageSettings
+  iframeTitle?: IframeTitle
+}
+```
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `url` | `string` | **(Required)** The Calendly event URL to open in the modal. |
+| `rootElement` | `HTMLElement` | **(Required)** The DOM element Calendly attaches the popup to. |
+| `text` | `string` | Label text rendered inside the button. |
+| `prefill` | `Prefill` | Pre-populate scheduling form fields. See [Prefill](/reference/prefill). |
+| `utm` | `Utm` | UTM tracking parameters. See [UTM](/reference/utm). |
+| `pageSettings` | `PageSettings` | Visual appearance overrides. See [PageSettings](/reference/page-settings). |
+| `iframeTitle` | `string` | Accessible title for the iframe element. |
+
+</Expandable>
+
+<Expandable title="CalendlyPopupWidgetOptions">
+
+Used by the `<CalendlyPopupWidget>` component and `initBadgeWidget` / `initPopupWidget` client methods.
+
+```ts
+type CalendlyPopupWidgetOptions = {
+  url: string
+  rootElement?: HTMLElement
+  text?: string
+  color?: string
+  textColor?: string
+  branding?: boolean
+  prefill?: Prefill
+  utm?: Utm
+  pageSettings?: PageSettings
+  iframeTitle?: IframeTitle
+}
+```
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `url` | `string` | **(Required)** The Calendly event URL. |
+| `rootElement` | `HTMLElement` | Optional DOM element to mount the widget into. |
+| `text` | `string` | Label text on the floating badge button. |
+| `color` | `string` | Background color of the badge button (hex string). |
+| `textColor` | `string` | Text color of the badge button (hex string). |
+| `branding` | `boolean` | Whether to show Calendly branding on the badge. |
+| `prefill` | `Prefill` | Pre-populate scheduling form fields. See [Prefill](/reference/prefill). |
+| `utm` | `Utm` | UTM tracking parameters. See [UTM](/reference/utm). |
+| `pageSettings` | `PageSettings` | Visual appearance overrides. See [PageSettings](/reference/page-settings). |
+| `iframeTitle` | `string` | Accessible title for the iframe element. |
+
+</Expandable>

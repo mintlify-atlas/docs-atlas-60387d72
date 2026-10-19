@@ -1,0 +1,120 @@
+---
+title: "useCalendlyEventListener(): React to Scheduling Events"
+sidebarTitle: "Event Listener"
+description: "Listens to postMessage events from the Calendly iframe. Supports 5 handlers: onEventScheduled, onDateAndTimeSelected, onEventTypeViewed, onProfilePageViewed, onPageHeightResize."
+---
+
+`useCalendlyEventListener()` listens to `window` `message` events dispatched by the embedded Calendly iframe. You pass an object of optional handler callbacks — the composable wires each one up to the corresponding `CalendlyEvent` value and calls it whenever the matching message arrives. Listeners are registered inside `onMounted` and automatically removed inside `onUnmounted`, making the composable safe to use inside any Vue component without manual cleanup.
+
+<Note>
+  `useCalendlyEventListener()` is auto-imported by Nuxt — no import statement is needed. The composable must be called inside a Vue component's `setup` function because it relies on `onMounted` and `onUnmounted` internally. Calling it outside a component context will throw a Vue warning.
+</Note>
+
+## Minimal Usage
+
+```ts
+useCalendlyEventListener({
+  onEventScheduled: (e) => {
+    console.log('Event scheduled!', e.data.payload)
+  },
+})
+```
+
+## CalendlyEvent Enum
+
+The composable file also exports a `CalendlyEvent` enum that maps each event handler to its underlying postMessage event name. You can import it from `#imports` when you need to compare raw `MessageEvent` data yourself.
+
+| Enum member | String value |
+|---|---|
+| `CalendlyEvent.PROFILE_PAGE_VIEWED` | `"calendly.profile_page_viewed"` |
+| `CalendlyEvent.EVENT_TYPE_VIEWED` | `"calendly.event_type_viewed"` |
+| `CalendlyEvent.DATE_AND_TIME_SELECTED` | `"calendly.date_and_time_selected"` |
+| `CalendlyEvent.EVENT_SCHEDULED` | `"calendly.event_scheduled"` |
+| `CalendlyEvent.PAGE_HEIGHT` | `"calendly.page_height"` |
+
+```ts
+import { CalendlyEvent } from '#imports'
+
+window.addEventListener('message', (e: MessageEvent) => {
+  if (e.data.event === CalendlyEvent.EVENT_SCHEDULED) {
+    console.log('Scheduled:', e.data.payload)
+  }
+})
+```
+
+## Event Handlers
+
+All handler props are optional. Provide only the ones your application needs.
+
+<ParamField path="onEventScheduled" type="(e: EventScheduledEvent) => any">
+  Fired when a user successfully schedules an event. The event payload contains API URIs you can use to fetch full event and invitee details from the Calendly v2 API.
+
+  <Expandable title="e.data.payload fields">
+    <ResponseField name="payload.event.uri" type="string">
+      Canonical API URI for the scheduled event.
+      Example: `https://calendly.com/api/v2/scheduled_events/AAAAAAAAAAAAAA`
+    </ResponseField>
+    <ResponseField name="payload.invitee.uri" type="string">
+      Canonical API URI for the invitee who scheduled the event.
+      Example: `https://calendly.com/api/v2/scheduled_events/AAAAAAAAAAAAAA/invitees/AAAAAAAAAAAAAA`
+    </ResponseField>
+  </Expandable>
+</ParamField>
+
+<ParamField path="onDateAndTimeSelected" type="(e: DateAndTimeSelectedEvent) => any">
+  Fired when a user selects a date and time slot but before they complete the booking form. The payload is an empty object `{}`. Useful for analytics tracking or to pre-load follow-up UI.
+</ParamField>
+
+<ParamField path="onEventTypeViewed" type="(e: EventTypeViewedEvent) => any">
+  Fired when a user views a Calendly event type page inside the embedded widget. The payload is an empty object `{}`.
+</ParamField>
+
+<ParamField path="onProfilePageViewed" type="(e: ProfilePageViewedEvent) => any">
+  Fired when a user views a Calendly profile page (a page listing multiple event types) inside the embedded widget. The payload is an empty object `{}`.
+</ParamField>
+
+<ParamField path="onPageHeightResize" type="(e: PageHeightResizeEvent) => any">
+  Fired when the Calendly iframe changes its internal height — for example when navigating between booking steps. Use this to synchronize a fixed-height wrapper element with the iframe's actual content size.
+
+  <Expandable title="e.data.payload fields">
+    <ResponseField name="payload.height" type="string">
+      The new iframe height as a CSS pixel string.
+      Example: `"1200px"`
+    </ResponseField>
+  </Expandable>
+</ParamField>
+
+## Full Example
+
+```vue
+<script setup lang="ts">
+import { useCalendlyEventListener } from '#imports'
+
+useCalendlyEventListener({
+  onProfilePageViewed: (e) => {
+    console.log('Profile page viewed', e)
+  },
+  onEventTypeViewed: (e) => {
+    console.log('Event type viewed', e)
+  },
+  onDateAndTimeSelected: (e) => {
+    console.log('Date and time selected', e)
+  },
+  onEventScheduled: (e) => {
+    const { event, invitee } = e.data.payload
+    console.log('Event scheduled:', event.uri, invitee.uri)
+  },
+  onPageHeightResize: (e) => {
+    console.log('New height:', e.data.payload.height)
+  },
+})
+</script>
+```
+
+<Note>
+  Import `useCalendlyEventListener` from `#imports` when you want an explicit import, or rely on Nuxt auto-imports and omit the import line entirely. Both approaches work identically at runtime.
+</Note>
+
+<Tip>
+  Use `onEventScheduled` to trigger post-booking workflows — for example, redirecting the user to a confirmation page, logging the booking URI to your backend, or firing a conversion event to an analytics platform. The `payload.event.uri` and `payload.invitee.uri` values can be passed directly to the Calendly v2 REST API to retrieve full booking details.
+</Tip>

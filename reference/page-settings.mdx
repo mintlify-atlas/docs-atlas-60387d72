@@ -1,0 +1,97 @@
+---
+title: "PageSettings: Customize Calendly Widget Appearance"
+sidebarTitle: "Page Settings"
+description: "Document all PageSettings fields for controlling Calendly embed colors, GDPR banner visibility, and event detail display options."
+---
+
+`PageSettings` is an optional object accepted by all three Calendly components (`<CalendlyInlineWidget>`, `<CalendlyPopupButton>`, `<CalendlyPopupWidget>`) as well as all composable option types. It lets you control the visual appearance and information density of the embedded Calendly scheduling page without modifying your Calendly account settings.
+
+## TypeScript Type
+
+```ts
+type PageSettings = Optional<{
+  hideLandingPageDetails: boolean
+  hideEventTypeDetails: boolean
+  backgroundColor: string
+  textColor: string
+  primaryColor: string
+  hideGdprBanner: boolean
+}>
+```
+
+All fields are optional. Omitting a field leaves the corresponding Calendly default in place.
+
+---
+
+## Fields
+
+<ParamField body="hideLandingPageDetails" type="boolean">
+  When `true`, hides your profile picture, name, event duration, location, and description from the embedded scheduling page. Useful when that information is already displayed on your own page and you want to avoid duplication.
+
+  See the [Calendly advanced embed options docs](https://help.calendly.com/hc/en-us/articles/360020052833-Advanced-embed-options#2) for more detail.
+</ParamField>
+
+<ParamField body="hideEventTypeDetails" type="boolean">
+  When `true`, hides event type details (such as duration and description) in the embed view. Similar to `hideLandingPageDetails` but targets the event type selection step specifically.
+</ParamField>
+
+<ParamField body="backgroundColor" type="string">
+  Sets the background color of the embedded scheduling page. Provide a hex color string **without** the `#` prefix (e.g. `"ffffff"` for white).
+
+  <Warning>
+    This setting is only available on the **Calendly Pro plan**. It has no effect on free accounts.
+  </Warning>
+</ParamField>
+
+<ParamField body="textColor" type="string">
+  Sets the text color of the embedded scheduling page. Provide a hex color string **without** the `#` prefix (e.g. `"4d5055"`).
+
+  <Warning>
+    This setting is only available on the **Calendly Pro plan**. It has no effect on free accounts.
+  </Warning>
+</ParamField>
+
+<ParamField body="primaryColor" type="string">
+  Sets the primary accent color (buttons, links, highlights) of the embedded scheduling page. Provide a hex color string **without** the `#` prefix (e.g. `"09a0c1"`).
+
+  <Warning>
+    This setting is only available on the **Calendly Pro plan**. It has no effect on free accounts.
+  </Warning>
+</ParamField>
+
+<ParamField body="hideGdprBanner" type="boolean">
+  When `true`, hides the GDPR cookie consent banner from the embedded scheduling page.
+
+  Certain Calendly integrations (Google Analytics, Facebook Pixel, PayPal, Stripe) require cookies and rely on this banner for user consent in the EU and EEA. Only set this to `true` if you implement your own compliant consent mechanism.
+
+  See the [Calendly cookie FAQ](https://help.calendly.com/hc/en-us/articles/360007385493-Cookie-FAQs) for more detail.
+</ParamField>
+
+---
+
+<Warning>
+  `backgroundColor`, `textColor`, and `primaryColor` are **Pro plan only** features. Passing them on a free Calendly account will have no visible effect.
+</Warning>
+
+<Note>
+  Color strings must **not** include the `#` prefix (e.g. use `"ffffff"`, not `"#ffffff"`). The module automatically strips a leading `#` if you accidentally include one, so both formats are safe — but omitting it is the recommended convention.
+</Note>
+
+---
+
+## Usage Example
+
+```vue
+<template>
+  <CalendlyInlineWidget
+    url="https://calendly.com/your-link/30min"
+    :page-settings="{
+      backgroundColor: 'ffffff',
+      primaryColor: '09a0c1',
+      textColor: '333333',
+      hideEventTypeDetails: true,
+      hideGdprBanner: false,
+    }"
+  />
+</template>
+```

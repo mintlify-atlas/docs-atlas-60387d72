@@ -1,0 +1,117 @@
+---
+title: "Prefill: Pre-populate Calendly Scheduling Forms"
+sidebarTitle: "Prefill"
+description: "Document all Prefill fields for pre-populating name, email, guests, and custom question answers in embedded Calendly scheduling forms."
+---
+
+The `prefill` prop lets you pre-populate fields in Calendly's scheduling form before the user sees it. This is especially useful when the viewer is already authenticated — you can forward their profile data so they don't have to type it again. All fields are optional.
+
+## TypeScript Type
+
+```ts
+type Prefill = Optional<{
+  name: string
+  email: string
+  firstName: string
+  lastName: string
+  smsReminderNumber: string
+  location: string
+  guests: string[]
+  customAnswers: Optional<{
+    a1: string
+    a2: string
+    a3: string
+    a4: string
+    a5: string
+    a6: string
+    a7: string
+    a8: string
+    a9: string
+    a10: string
+  }>
+  date: Date
+}>
+```
+
+All fields are optional. Only the fields you provide are forwarded to Calendly as query parameters.
+
+---
+
+## Fields
+
+<ParamField body="name" type="string">
+  Pre-fills the full name field on the scheduling form (e.g. `"Jane Doe"`). If both `name` and `firstName`/`lastName` are provided, `firstName` and `lastName` take precedence for their respective fields.
+</ParamField>
+
+<ParamField body="firstName" type="string">
+  Pre-fills the first name field on the scheduling form (e.g. `"Jane"`).
+</ParamField>
+
+<ParamField body="lastName" type="string">
+  Pre-fills the last name field on the scheduling form (e.g. `"Doe"`).
+</ParamField>
+
+<ParamField body="email" type="string">
+  Pre-fills the email address field on the scheduling form (e.g. `"jane@example.com"`).
+</ParamField>
+
+<ParamField body="smsReminderNumber" type="string">
+  Pre-fills the phone number used for SMS reminders. Include the country code in E.164 format (e.g. `"+15551234567"`).
+</ParamField>
+
+<ParamField body="location" type="string">
+  Pre-fills the meeting location field when the event type offers a location choice (e.g. `"New York, NY"`).
+</ParamField>
+
+<ParamField body="guests" type="string[]">
+  Pre-fills the guest list with an array of email address strings. Each string is URL-encoded and appended as a `guests` query parameter (e.g. `["alice@example.com", "bob@example.com"]`).
+</ParamField>
+
+<ParamField body="customAnswers" type="object">
+  Pre-fills answers to custom questions defined on the Calendly event type. Use keys `a1` through `a10`, corresponding to the order of custom questions on the event form.
+
+  ```ts
+  customAnswers: {
+    a1: string
+    a2: string
+    a3: string
+    a4: string
+    a5: string
+    a6: string
+    a7: string
+    a8: string
+    a9: string
+    a10: string
+  }
+  ```
+
+  Only keys matching the pattern `a1`–`a10` are forwarded. Any other keys are silently ignored.
+</ParamField>
+
+<ParamField body="date" type="Date">
+  Pre-selects a specific date on the calendar. Pass a JavaScript `Date` object. The module formats it as `YYYY-MM-DD` before appending it to the Calendly URL.
+</ParamField>
+
+---
+
+## Usage Example
+
+```vue
+<template>
+  <CalendlyInlineWidget
+    url="https://calendly.com/your-link/30min"
+    :prefill="{
+      name: 'Jane Doe',
+      email: 'jane@example.com',
+      customAnswers: {
+        a1: 'How did you hear about us?',
+        a2: 'Via Twitter',
+      },
+    }"
+  />
+</template>
+```
+
+<Tip>
+  Use `prefill` to improve the scheduling experience for logged-in users by passing their stored profile data (name, email, phone). This reduces friction and increases booking completion rates.
+</Tip>

@@ -1,0 +1,99 @@
+---
+title: "CalendlyPopupButton: Trigger Scheduling from a Button"
+sidebarTitle: "Popup Button"
+description: "A button component that opens a Calendly scheduling popup modal. Supports custom slot content, prefill, UTM tracking, and pageSettings."
+---
+
+`CalendlyPopupButton` renders a `<button>` element that, when clicked, opens a Calendly scheduling modal overlaid on your page. The popup is teleported into a DOM element you control via `rootElement`, keeping it visually isolated from your page's stacking context. The component tracks its own open/closed state and exposes it so parent components can react accordingly.
+
+## Minimal Usage
+
+```vue
+<template>
+  <CalendlyPopupButton
+    url="https://calendly.com/your-link/30min"
+    :root-element="$el"
+  />
+</template>
+```
+
+<Note>
+  `rootElement` is required and must be a real `HTMLElement` from your application — typically the component's own root element via `$el`, or a dedicated container via a template ref. The popup modal is teleported into this element when opened.
+</Note>
+
+## Props
+
+<ParamField path="url" type="string" required>
+  The full Calendly scheduling URL to open in the popup modal, e.g. `https://calendly.com/johndoe/30min`.
+</ParamField>
+
+<ParamField path="rootElement" type="HTMLElement" required>
+  The DOM element that will host the popup modal overlay. The modal is teleported into this element using Vue's `<Teleport>`. Pass `$el` or a template ref bound to a container `<div>`.
+</ParamField>
+
+<ParamField path="text" type="string">
+  The visible label rendered inside the button. Defaults to `"Schedule time with me"`. If you provide a default slot, the slot content is rendered alongside this text.
+</ParamField>
+
+<ParamField path="prefill" type="Prefill">
+  Pre-populate the scheduling form fields (name, email, custom answers, etc.) inside the popup. See [Prefill reference](/reference/prefill) for all available fields.
+</ParamField>
+
+<ParamField path="utm" type="Utm">
+  Attach UTM parameters to the Calendly URL loaded in the popup for campaign attribution. See [Utm reference](/reference/utm) for all available fields.
+</ParamField>
+
+<ParamField path="pageSettings" type="PageSettings">
+  Customize the appearance of the Calendly page inside the popup — colors, visibility of landing details, GDPR banner, and more. See [PageSettings reference](/reference/page-settings) for all available fields.
+</ParamField>
+
+<ParamField path="iframeTitle" type="string">
+  Accessible `title` attribute for the iframe rendered inside the popup modal. Defaults to `"Calendly Scheduling Page"`.
+</ParamField>
+
+## Events
+
+<ResponseField name="click" type="() => void">
+  Emitted when the button is clicked and the popup is about to open. Fires before `isOpen` is set to `true`.
+</ResponseField>
+
+<ResponseField name="close" type="() => void">
+  Emitted when the user dismisses the popup modal — either by clicking the close button or the overlay backdrop. Fires before `isOpen` is set to `false`.
+</ResponseField>
+
+## Exposed State
+
+<ResponseField name="isOpen" type="Ref<boolean>">
+  A reactive boolean ref that reflects whether the popup modal is currently open. Access it via a template ref on the component to programmatically read or react to the modal state.
+</ResponseField>
+
+## Slot
+
+The component provides a default `<slot>` rendered inside the `<button>` element, after the `text` value. Use it to embed icons, badges, or other custom content alongside or instead of the default label.
+
+## Full Example
+
+```vue
+<template>
+  <div ref="rootElement">
+    <CalendlyPopupButton
+      url="https://calendly.com/your-link/30min"
+      :root-element="rootElement"
+      text="Book a demo"
+      @click="onOpen"
+      @close="onClose"
+    >
+      <span>📅 Book a demo</span>
+    </CalendlyPopupButton>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const rootElement = ref<HTMLElement>()
+
+const onOpen = () => console.log('Popup opened')
+const onClose = () => console.log('Popup closed')
+</script>
+```

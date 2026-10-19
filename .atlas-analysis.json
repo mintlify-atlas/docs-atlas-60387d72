@@ -1,0 +1,66 @@
+{
+  "projectType": "sdk-library",
+  "projectName": "Nuxt Calendly",
+  "projectDescription": "A Nuxt 3 module that provides type-safe Calendly integration through auto-loaded components and composables.",
+  "theme": "luma",
+  "primaryColor": "#09a0c1",
+  "lightColor": null,
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["introduction", "quickstart", "configuration"]
+          },
+          {
+            "group": "Components",
+            "pages": [
+              "components/inline-widget",
+              "components/popup-button",
+              "components/popup-widget"
+            ]
+          },
+          {
+            "group": "Composables",
+            "pages": [
+              "composables/use-calendly",
+              "composables/use-calendly-event-listener"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/types",
+              "reference/page-settings",
+              "reference/prefill",
+              "reference/utm"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Auto-loaded CalendlyInlineWidget, CalendlyPopupButton, and CalendlyPopupWidget components",
+    "useCalendly() composable exposing all Calendly widget.js methods",
+    "useCalendlyEventListener() composable for responding to Calendly events",
+    "Full TypeScript support with complete type definitions",
+    "Configurable module options (isEnabled, loadWidgetCSS, loadWidgetCloseIconSvg)",
+    "Prefill support for scheduling forms (name, email, custom answers, etc.)",
+    "UTM parameter passthrough for tracking",
+    "PageSettings for styling the embedded Calendly widget"
+  ],
+  "publicApiSurface": [
+    "CalendlyInlineWidget (component)",
+    "CalendlyPopupButton (component)",
+    "CalendlyPopupWidget (component)",
+    "useCalendly() — closePopupWidget, destroyBadgeWidget, initBadgeWidget, initPopupWidget, initInlineWidget, showPopupWidget",
+    "useCalendlyEventListener({ onDateAndTimeSelected, onEventScheduled, onEventTypeViewed, onProfilePageViewed, onPageHeightResize })",
+    "ModuleOptions — isEnabled, loadWidgetCSS, loadWidgetCloseIconSvg",
+    "CalendlyEvent enum — PROFILE_PAGE_VIEWED, EVENT_TYPE_VIEWED, DATE_AND_TIME_SELECTED, EVENT_SCHEDULED, PAGE_HEIGHT",
+    "Types — Prefill, Utm, PageSettings, IframeTitle, CalendlyInlineWidgetOptions, CalendlyPopupButtonOptions, CalendlyPopupWidgetOptions"
+  ]
+}

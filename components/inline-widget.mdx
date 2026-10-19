@@ -1,0 +1,68 @@
+---
+title: "CalendlyInlineWidget: Embed Scheduling in Your Page"
+sidebarTitle: "Inline Widget"
+description: "Renders a Calendly scheduling page as an inline iframe. Supports prefill, UTM tracking, and appearance customization via pageSettings."
+---
+
+`CalendlyInlineWidget` embeds a Calendly scheduling page directly inside your Nuxt page using an iframe. The widget handles its own loading state, displaying a spinner until the iframe is ready, and then emitting a `load` event so you can react in your application code.
+
+## Minimal Usage
+
+```vue
+<template>
+  <CalendlyInlineWidget url="https://calendly.com/your-link/30min" />
+</template>
+```
+
+## Props
+
+<ParamField path="url" type="string" required>
+  The full Calendly scheduling URL to embed. Must be a valid Calendly event or user page URL, e.g. `https://calendly.com/johndoe/30min`.
+</ParamField>
+
+<ParamField path="prefill" type="Prefill">
+  Pre-populate the scheduling form with user data such as name, email, and custom answers. See [Prefill reference](/reference/prefill) for all available fields.
+</ParamField>
+
+<ParamField path="utm" type="Utm">
+  Attach UTM tracking parameters to the embedded scheduling URL for campaign attribution. See [Utm reference](/reference/utm) for all available fields.
+</ParamField>
+
+<ParamField path="pageSettings" type="PageSettings">
+  Customize the appearance of the embedded Calendly page — hide landing page details, change background, text, and primary colors, or suppress the GDPR banner. See [PageSettings reference](/reference/page-settings) for all available fields.
+</ParamField>
+
+<ParamField path="iframeTitle" type="string">
+  Accessible `title` attribute applied to the `<iframe>` element. Used by assistive technologies to describe the iframe. Defaults to `"Calendly Scheduling Page"`.
+</ParamField>
+
+## Events
+
+<ResponseField name="load" type="() => void">
+  Emitted once when the embedded iframe finishes loading. Use this to hide external loading indicators or trigger analytics events.
+</ResponseField>
+
+## Exposed State
+
+The component internally tracks a reactive `isLoading` boolean. While `isLoading` is `true`, a `<LoadingSpinner>` is rendered on top of the iframe placeholder. Once the iframe fires its native `load` event, the spinner is removed and the `load` event is emitted to the parent.
+
+<Note>
+  The widget container has a minimum width of `320px` and a fixed height of `630px` by default, matching Calendly's own embed recommendations. Ensure its parent element provides sufficient space.
+</Note>
+
+## Full Example
+
+```vue
+<template>
+  <CalendlyInlineWidget
+    url="https://calendly.com/your-link/30min"
+    :prefill="{ name: 'Jane Doe', email: 'jane@example.com' }"
+    :page-settings="{ hideEventTypeDetails: true, primaryColor: '09a0c1' }"
+    @load="onWidgetLoaded"
+  />
+</template>
+
+<script setup lang="ts">
+const onWidgetLoaded = () => console.log('Calendly widget loaded')
+</script>
+```

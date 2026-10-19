@@ -1,0 +1,56 @@
+---
+title: "Nuxt Calendly: Type-Safe Calendly for Nuxt 3"
+sidebarTitle: "Introduction"
+description: "nuxt-calendly integrates Calendly into Nuxt 3 with auto-imported components, composables, and full TypeScript support — no CDN dependency required."
+---
+
+`nuxt-calendly` is a Nuxt 3 module that brings Calendly scheduling directly into your app with zero configuration boilerplate. On this page you will learn what the module provides, which components and composables are available, and where to go next to get up and running.
+
+## Components
+
+The module registers three components that are auto-imported into every page and component in your Nuxt app — no manual `import` statement needed.
+
+| Component | Description |
+|---|---|
+| `<CalendlyInlineWidget>` | Embeds a Calendly scheduling page directly inside your layout using an `<iframe>`. |
+| `<CalendlyPopupButton>` | Renders a `<button>` that opens a Calendly popup modal on click. |
+| `<CalendlyPopupWidget>` | Renders a floating badge widget (bottom corner) that opens a Calendly popup modal on click. |
+
+## Composables
+
+Two composables are auto-imported alongside the components.
+
+| Composable | Description |
+|---|---|
+| `useCalendly()` | Exposes all of Calendly's [`widget.js`](https://assets.calendly.com/assets/external/widget.js) methods — `initInlineWidget`, `initPopupWidget`, `initBadgeWidget`, `showPopupWidget`, `closePopupWidget`, and `destroyBadgeWidget` — with lazy script loading built in. |
+| `useCalendlyEventListener()` | Listens to window `message` events emitted by the Calendly iframe, letting you react to scheduling milestones such as `event_scheduled`, `date_and_time_selected`, `event_type_viewed`, `profile_page_viewed`, and `page_height`. |
+
+## Get Started
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="bolt" href="/quickstart">
+    Install the module and embed your first Calendly widget in minutes.
+  </Card>
+  <Card title="Configuration" icon="gear" href="/configuration">
+    Explore the three module options and learn when to override the defaults.
+  </Card>
+  <Card title="Inline Widget" icon="calendar" href="/components/inline-widget">
+    Deep-dive into the CalendlyInlineWidget component props and events.
+  </Card>
+  <Card title="useCalendly" icon="code" href="/composables/use-calendly">
+    Programmatically control Calendly widgets with the useCalendly composable.
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **Type-safe** — Every prop, composable return value, and event payload is fully typed. The module ships its own TypeScript definitions based on the `react-calendly` type set so your IDE always knows what is valid.
+- **Auto-imported components** — `CalendlyInlineWidget`, `CalendlyPopupButton`, and `CalendlyPopupWidget` are registered globally by Nuxt; no manual imports are ever required.
+- **Auto-imported composables** — `useCalendly()` and `useCalendlyEventListener()` are available anywhere in your app the same way as Nuxt's built-in composables.
+- **Zero CDN dependency for CSS and SVG** — By default the module bundles Calendly's `widget.css` and the close-icon SVG directly into your app, eliminating two extra HTTP requests to `assets.calendly.com`.
+- **Lazy widget script loading** — `widget.js` is loaded from the Calendly CDN on demand the first time a widget method is called, keeping your initial page weight low.
+- **Nuxt ≥ 3.0.0 compatible** — The module declares `nuxt: ">=3.0.0"` in its compatibility matrix and is built with `@nuxt/kit`.
+
+<Note>
+  `nuxt-calendly` is inspired by [react-calendly](https://github.com/tcampb/react-calendly) and wraps Calendly's official `widget.js`. It is not affiliated with or maintained by Calendly.
+</Note>

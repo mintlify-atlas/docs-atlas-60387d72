@@ -1,0 +1,71 @@
+---
+title: "UTM Parameters for Calendly Tracking"
+sidebarTitle: "UTM Parameters"
+description: "Document the Utm type for passing UTM tracking parameters to the embedded Calendly widget for campaign attribution and analytics."
+---
+
+The `utm` prop passes UTM tracking parameters to the Calendly scheduling page. This lets you attribute bookings to specific marketing campaigns, traffic sources, and ad creatives directly within your analytics tools and the Calendly analytics dashboard.
+
+## TypeScript Type
+
+```ts
+type Utm = Optional<{
+  utmCampaign: string
+  utmSource: string
+  utmMedium: string
+  utmContent: string
+  utmTerm: string
+  salesforce_uuid: string
+}>
+```
+
+All fields are optional. Only the fields you provide are appended to the Calendly URL as query parameters. Omitting the `utm` prop entirely leaves the URL unchanged.
+
+---
+
+## Fields
+
+<ParamField body="utmCampaign" type="string">
+  The name of the marketing campaign driving traffic to this scheduling page. Maps to the `utm_campaign` query parameter in the Calendly URL (e.g. `"q4-2024-product-launch"`).
+</ParamField>
+
+<ParamField body="utmSource" type="string">
+  The traffic source — identifies which site, platform, or channel sent the visitor. Maps to `utm_source` (e.g. `"homepage"`, `"newsletter"`, `"google"`).
+</ParamField>
+
+<ParamField body="utmMedium" type="string">
+  The marketing medium — describes the type of channel used. Maps to `utm_medium` (e.g. `"cta-button"`, `"email"`, `"cpc"`).
+</ParamField>
+
+<ParamField body="utmContent" type="string">
+  An identifier for the specific ad or content variant that was clicked. Useful for A/B testing. Maps to `utm_content` (e.g. `"hero-banner"`, `"sidebar-link"`).
+</ParamField>
+
+<ParamField body="utmTerm" type="string">
+  The paid search keyword that triggered the ad. Maps to `utm_term` (e.g. `"scheduling software"`).
+</ParamField>
+
+<ParamField body="salesforce_uuid" type="string">
+  A Salesforce UUID used to associate the booking with a specific lead or contact in your Salesforce CRM. Passed directly as the `salesforce_uuid` query parameter.
+</ParamField>
+
+---
+
+## Usage Example
+
+```vue
+<template>
+  <CalendlyInlineWidget
+    url="https://calendly.com/your-link/30min"
+    :utm="{
+      utmSource: 'homepage',
+      utmMedium: 'cta-button',
+      utmCampaign: 'q4-2024-launch',
+    }"
+  />
+</template>
+```
+
+<Note>
+  UTM parameters are URL-encoded and appended to the Calendly scheduling page URL as query string parameters. They will appear in your **Calendly analytics dashboard** under the reporting section, allowing you to compare booking rates across campaigns and traffic sources.
+</Note>

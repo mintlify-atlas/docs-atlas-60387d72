@@ -1,0 +1,95 @@
+---
+title: "Configure the Nuxt Calendly Module Options"
+sidebarTitle: "Configuration"
+description: "Learn the three nuxt-calendly module options — isEnabled, loadWidgetCSS, and loadWidgetCloseIconSvg — and how to set them in nuxt.config.ts."
+---
+
+`nuxt-calendly` ships with sensible defaults that work for the majority of projects out of the box. When you need to customise asset loading or toggle the module during development, three configuration options are available under the `calendly` key in `nuxt.config.ts`.
+
+## Setting options
+
+Pass any combination of options to the `calendly` key. Every property is optional — omitting a key uses its default value.
+
+```ts nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ['nuxt-calendly'],
+  calendly: {
+    isEnabled: true,
+    loadWidgetCSS: true,
+    loadWidgetCloseIconSvg: true,
+  },
+})
+```
+
+## Options reference
+
+<ParamField body="isEnabled" type="boolean" default="true">
+  Controls whether the entire `nuxt-calendly` module is active. When `true` (the default), all three components and both composables are registered and available throughout the app. When `false`, the module exits early and nothing is registered.
+
+  <Warning>
+    Setting `isEnabled` to `false` means **no components or composables will be registered**. Any template that references `<CalendlyInlineWidget>`, `<CalendlyPopupButton>`, `<CalendlyPopupWidget>`, `useCalendly()`, or `useCalendlyEventListener()` will throw a runtime error. Use this option only when you intentionally want to strip Calendly from a specific build (for example, a staging environment).
+  </Warning>
+
+  ```ts nuxt.config.ts
+  export default defineNuxtConfig({
+    modules: ['nuxt-calendly'],
+    calendly: {
+      isEnabled: false, // module is completely disabled
+    },
+  })
+  ```
+</ParamField>
+
+<ParamField body="loadWidgetCSS" type="boolean" default="true">
+  When `true`, the module adds Calendly's `widget.css` directly to your Nuxt app's global CSS bundle via `nuxt.options.css`. This means the stylesheet is served from your own origin and inlined into the build output, saving one HTTP request to `https://assets.calendly.com/assets/external/widget.css`.
+
+  Set this to `false` if you already load the Calendly stylesheet yourself (for example, via a `<link>` tag in your document head) or if you want to supply a fully custom CSS file for the widgets.
+
+  ```ts nuxt.config.ts
+  export default defineNuxtConfig({
+    modules: ['nuxt-calendly'],
+    calendly: {
+      loadWidgetCSS: false, // you are loading widget.css yourself
+    },
+  })
+  ```
+</ParamField>
+
+<ParamField body="loadWidgetCloseIconSvg" type="boolean" default="true">
+  When `true`, the close-button icon SVG used by the popup modal is inlined into your app bundle, saving one HTTP request to `https://assets.calendly.com/assets/external/close-icon.svg`.
+
+  Set this to `false` if you already load the SVG yourself or if you want to replace the close icon with a custom asset.
+
+  ```ts nuxt.config.ts
+  export default defineNuxtConfig({
+    modules: ['nuxt-calendly'],
+    calendly: {
+      loadWidgetCloseIconSvg: false, // you are loading close-icon.svg yourself
+    },
+  })
+  ```
+</ParamField>
+
+## Full example
+
+The following config explicitly sets all three options. This is equivalent to the defaults and is shown here as a reference for projects that prefer explicit configuration.
+
+```ts nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ['nuxt-calendly'],
+  calendly: {
+    // Set to false to completely disable the module and all its components/composables.
+    isEnabled: true,
+
+    // Set to false if you load https://assets.calendly.com/assets/external/widget.css yourself.
+    loadWidgetCSS: true,
+
+    // Set to false if you load https://assets.calendly.com/assets/external/close-icon.svg yourself.
+    loadWidgetCloseIconSvg: true,
+  },
+})
+```
+
+<Tip>
+  For most projects, the defaults work perfectly. You only need to set `loadWidgetCSS` or `loadWidgetCloseIconSvg` to `false` if you have an existing pipeline that already fetches those assets from the Calendly CDN or if you need full control over their styling.
+</Tip>

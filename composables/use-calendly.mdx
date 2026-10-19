@@ -1,0 +1,226 @@
+---
+title: "useCalendly(): Programmatic Calendly Widget Control"
+sidebarTitle: "useCalendly"
+description: "Wraps Calendly's widget.js, lazy-loads the script on first call, and exposes 6 async methods for controlling inline, popup, and badge widgets."
+---
+
+`useCalendly()` is the primary composable for programmatically controlling Calendly widgets. It lazy-loads the Calendly `widget.js` script from `assets.calendly.com` on first invocation — subsequent calls reuse the already-loaded script — and returns an object containing 6 async methods. All methods are client-side only: they are safe to call during SSR but become no-ops until the code runs in the browser.
+
+## Usage
+
+```vue
+<script setup lang="ts">
+const calendly = useCalendly()
+</script>
+```
+
+<Note>
+  `useCalendly()` is auto-imported by Nuxt — no `import` statement is needed. All six returned methods are `async` and are safe no-ops on the server, making the composable fully SSR-compatible.
+</Note>
+
+## Methods
+
+### initInlineWidget(options)
+
+Initializes an inline Calendly widget inside a container element you provide. The widget is rendered as an `<iframe>` inside that element. Call this after the container element is mounted (e.g. inside `onMounted`).
+
+<ParamField path="options" type="CalendlyInlineWidgetOptions">
+  Configuration object for the inline widget. See [Types reference](/reference/types) for all available fields.
+
+  <Expandable title="options fields">
+    <ParamField path="options.prefill" type="Prefill">
+      Pre-populate scheduling form fields such as name, email, and custom answers. See [Prefill reference](/reference/prefill).
+    </ParamField>
+    <ParamField path="options.utm" type="Utm">
+      Attach UTM tracking parameters to the embedded URL for campaign attribution. See [Utm reference](/reference/utm).
+    </ParamField>
+    <ParamField path="options.pageSettings" type="PageSettings">
+      Customize the appearance of the Calendly page — colors, visibility of event details, GDPR banner, and more. See [PageSettings reference](/reference/page-settings).
+    </ParamField>
+    <ParamField path="options.iframeTitle" type="string">
+      Accessible `title` attribute for the `<iframe>` element. Defaults to `"Calendly Scheduling Page"`.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+```ts
+const calendly = useCalendly()
+
+await calendly.initInlineWidget({
+  url: 'https://calendly.com/your-link/30min',
+  parentElement: document.getElementById('calendly-container')!,
+})
+```
+
+---
+
+### initPopupWidget(options)
+
+Initializes a Calendly popup modal and opens it immediately. Use this when you want full control over popup appearance settings at the moment of opening.
+
+<ParamField path="options" type="PopupModalContentOptions" required>
+  Configuration object for the popup modal.
+
+  <Expandable title="options fields">
+    <ParamField path="options.url" type="string" required>
+      The full Calendly scheduling URL to open in the popup, e.g. `https://calendly.com/johndoe/30min`.
+    </ParamField>
+    <ParamField path="options.prefill" type="Prefill">
+      Pre-populate the scheduling form fields inside the popup. See [Prefill reference](/reference/prefill).
+    </ParamField>
+    <ParamField path="options.utm" type="Utm">
+      Attach UTM parameters to the Calendly URL loaded inside the popup. See [Utm reference](/reference/utm).
+    </ParamField>
+    <ParamField path="options.pageSettings" type="PageSettings">
+      Customize the appearance of the Calendly page inside the popup. See [PageSettings reference](/reference/page-settings).
+    </ParamField>
+    <ParamField path="options.iframeTitle" type="string">
+      Accessible `title` attribute for the iframe inside the popup. Defaults to `"Calendly Scheduling Page"`.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+```ts
+const calendly = useCalendly()
+
+await calendly.initPopupWidget({
+  url: 'https://calendly.com/your-link/30min',
+})
+```
+
+---
+
+### showPopupWidget(url)
+
+Opens the Calendly popup modal for the given scheduling URL. This is the simplest way to trigger a popup — no additional configuration options are needed.
+
+<ParamField path="url" type="string" required>
+  The full Calendly scheduling URL to open in the popup modal, e.g. `https://calendly.com/johndoe/30min`.
+</ParamField>
+
+```ts
+const calendly = useCalendly()
+
+await calendly.showPopupWidget('https://calendly.com/your-link/30min')
+```
+
+---
+
+### closePopupWidget()
+
+Closes the currently open Calendly popup modal. Has no effect if no popup is open.
+
+```ts
+const calendly = useCalendly()
+
+await calendly.closePopupWidget()
+```
+
+---
+
+### initBadgeWidget(options)
+
+Initializes Calendly's floating badge widget. The badge appears anchored in the bottom-right corner of the page and opens a popup modal when clicked. The composable applies default values for `color`, `textColor`, and `branding` if those fields are omitted.
+
+<ParamField path="options" type="CalendlyPopupWidgetOptions" required>
+  Configuration object for the badge widget.
+
+  <Expandable title="options fields">
+    <ParamField path="options.url" type="string" required>
+      The Calendly scheduling URL opened when the badge is clicked.
+    </ParamField>
+    <ParamField path="options.text" type="string">
+      The label displayed inside the badge button. Defaults to `"Schedule time with me"`.
+    </ParamField>
+    <ParamField path="options.color" type="string">
+      Background color of the badge, as a CSS hex string. Defaults to `"#00a2ff"`.
+    </ParamField>
+    <ParamField path="options.textColor" type="string">
+      Text color of the badge label, as a CSS hex string. Defaults to `"#ffffff"`.
+    </ParamField>
+    <ParamField path="options.branding" type="boolean">
+      Whether to display the Calendly branding inside the badge. Defaults to `true`.
+    </ParamField>
+    <ParamField path="options.rootElement" type="HTMLElement">
+      The DOM element to mount the badge widget into. Provide a template ref when you want to scope the badge to a specific container.
+    </ParamField>
+    <ParamField path="options.prefill" type="Prefill">
+      Pre-populate the scheduling form when the badge popup opens. See [Prefill reference](/reference/prefill).
+    </ParamField>
+    <ParamField path="options.utm" type="Utm">
+      Attach UTM parameters to the scheduling URL. See [Utm reference](/reference/utm).
+    </ParamField>
+    <ParamField path="options.pageSettings" type="PageSettings">
+      Customize the appearance of the Calendly page inside the badge popup. See [PageSettings reference](/reference/page-settings).
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+```ts
+const rootElement = ref<HTMLElement>()
+const calendly = useCalendly()
+
+onMounted(() => {
+  calendly.initBadgeWidget({
+    url: 'https://calendly.com/your-link/30min',
+    text: 'Schedule time with me',
+    color: '#09a0c1',
+    textColor: '#ffffff',
+    rootElement: rootElement.value,
+  })
+})
+```
+
+---
+
+### destroyBadgeWidget()
+
+Destroys and removes the floating badge widget from the DOM. Use this to clean up the badge when navigating away or when the widget is no longer needed.
+
+```ts
+const calendly = useCalendly()
+
+await calendly.destroyBadgeWidget()
+```
+
+---
+
+## Full Example
+
+The example below mirrors the playground page — it renders buttons that each exercise a different `useCalendly()` method when clicked.
+
+```vue
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
+const calendly = useCalendly()
+const rootElement = ref<HTMLElement>()
+const url = 'https://calendly.com/your-link/30min'
+
+onMounted(() => {
+  calendly.initBadgeWidget({
+    url,
+    text: 'Schedule time with me',
+    color: '#09a0c1',
+    textColor: '#ffffff',
+    rootElement: rootElement.value,
+  })
+})
+
+const openPopup = () => calendly.showPopupWidget(url)
+const closePopup = () => calendly.closePopupWidget()
+const removeBadge = () => calendly.destroyBadgeWidget()
+</script>
+
+<template>
+  <div ref="rootElement">
+    <button @click="openPopup">Open popup</button>
+    <button @click="closePopup">Close popup</button>
+    <button @click="removeBadge">Remove badge</button>
+  </div>
+</template>
+```
+
+<Tip>
+  For most use cases the `<CalendlyPopupButton>` and `<CalendlyPopupWidget>` components are easier to work with than calling these methods directly. Reach for `useCalendly()` when you need custom trigger logic — for example, opening a popup after a form submission or after a timed delay.
+</Tip>

@@ -1,0 +1,103 @@
+---
+title: "CalendlyPopupWidget: Floating Badge Scheduling Widget"
+sidebarTitle: "Popup Widget"
+description: "A floating Calendly badge widget that opens a scheduling popup modal. Mirrors Calendly's native badge embed with full color and branding control."
+---
+
+`CalendlyPopupWidget` renders a floating badge button — styled to match Calendly's own native badge embed — that opens a scheduling popup modal when clicked. The badge sits in your layout at the position you choose, and the popup is teleported into the `rootElement` you provide. Like `CalendlyPopupButton`, it manages its own `isOpen` state and exposes it for external use.
+
+## Minimal Usage
+
+```vue
+<template>
+  <CalendlyPopupWidget
+    url="https://calendly.com/your-link/30min"
+    :root-element="$el"
+  />
+</template>
+```
+
+## Props
+
+<ParamField path="url" type="string" required>
+  The full Calendly scheduling URL to open in the popup modal, e.g. `https://calendly.com/johndoe/30min`.
+</ParamField>
+
+<ParamField path="rootElement" type="HTMLElement" required>
+  The DOM element that will host the popup modal overlay. The modal is teleported into this element using Vue's `<Teleport>`. Pass `$el` or a template ref bound to a dedicated container element.
+</ParamField>
+
+<ParamField path="text" type="string">
+  The label displayed on the floating badge button. Defaults to `"Schedule time with me"`.
+</ParamField>
+
+<ParamField path="color" type="string">
+  The background color of the badge button. Accepts any valid CSS color string. Defaults to `#00a2ff`.
+</ParamField>
+
+<ParamField path="textColor" type="string">
+  The text color of the badge label. Accepts any valid CSS color string. Defaults to `#ffffff`.
+</ParamField>
+
+<ParamField path="branding" type="boolean">
+  When `true` (the default), a small `"powered by Calendly"` label is rendered below the badge text. Set to `false` to hide the branding line.
+</ParamField>
+
+<ParamField path="prefill" type="Prefill">
+  Pre-populate the scheduling form fields inside the popup (name, email, custom answers, etc.). See [Prefill reference](/reference/prefill) for all available fields.
+</ParamField>
+
+<ParamField path="utm" type="Utm">
+  Attach UTM tracking parameters to the Calendly URL loaded inside the popup. See [Utm reference](/reference/utm) for all available fields.
+</ParamField>
+
+<ParamField path="pageSettings" type="PageSettings">
+  Customize the appearance of the Calendly scheduling page inside the popup — background color, text color, primary color, and banner visibility. See [PageSettings reference](/reference/page-settings) for all available fields.
+</ParamField>
+
+<ParamField path="iframeTitle" type="string">
+  Accessible `title` attribute for the iframe rendered inside the popup modal. Defaults to `"Calendly Scheduling Page"`.
+</ParamField>
+
+## Events
+
+<ResponseField name="click" type="() => void">
+  Emitted when the floating badge is clicked and the popup is about to open.
+</ResponseField>
+
+<ResponseField name="close" type="() => void">
+  Emitted when the user dismisses the popup modal by clicking the close button or the overlay backdrop.
+</ResponseField>
+
+## Exposed State
+
+<ResponseField name="isOpen" type="Ref<boolean>">
+  A reactive boolean ref that reflects whether the popup modal is currently open. Access it via a template ref to programmatically read or respond to the modal's state.
+</ResponseField>
+
+## Full Example
+
+```vue
+<template>
+  <div ref="rootElement">
+    <CalendlyPopupWidget
+      url="https://calendly.com/your-link/30min"
+      :root-element="rootElement"
+      text="Schedule time with me"
+      color="#09a0c1"
+      text-color="#ffffff"
+      :branding="false"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const rootElement = ref<HTMLElement>()
+</script>
+```
+
+<Tip>
+  Use the `color` and `textColor` props to match the floating badge to your brand palette. For example, set `color` to your primary brand hex and `textColor` to white or a contrasting tone for legibility.
+</Tip>
